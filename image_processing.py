@@ -14,8 +14,8 @@ edges = cv2.Canny(gray_image, 50, 150)
 circles = cv2.HoughCircles(edges, cv2.HOUGH_GRADIENT, dp=1, minDist=20, param1=50, param2=30, minRadius=0, maxRadius=0)
 
 if circles is not None:
-    circles = np.uint16(np.around(circles))
-    for circle in circles[0, :]:
+    circles = np.uint16(np.around(circles)) # type: ignore
+    for circle in circles[0, :]: # type: ignore
         x, y, r = circle[0], circle[1], circle[2]
         cv2.circle(image, (x, y), r, (0, 255, 0), 2)  # Algılanan daireyi yeşil bir çizgi ile işaretle
 
