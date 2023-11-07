@@ -3,6 +3,7 @@
 # https://github.com/ParthJadhav/Tkinter-Designer
 
 
+from os import error, getcwd
 from pathlib import Path
 
 # from tkinter import *
@@ -10,16 +11,18 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 
 
-OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"C:\Users\aglam\Documents\python projeleri\SP-image_processing_device\screens\assets\frame0")
-
+current_directory = getcwd()
+print(current_directory)
+frame_number= r"\frame0"
+ASSETS_PATH =  Path(current_directory + r"\Screens\Assets" + frame_number)   
+print(ASSETS_PATH)
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
 
 window = Tk()
-
+#window.attributes('-fullscreen',True)
 window.geometry("480x320")
 window.configure(bg = "#47C4B6")
 

@@ -3,6 +3,7 @@
 # https://github.com/ParthJadhav/Tkinter-Designer
 
 
+from os import error, getcwd
 from pathlib import Path
 
 # from tkinter import *
@@ -10,16 +11,18 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 
 
-OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"C:\Users\aglam\Documents\python projeleri\SP-image_processing_device\screens\assets\frame2")
-
+current_directory = getcwd()
+print(current_directory)
+frame_number= r"\frame1"
+ASSETS_PATH =  Path(current_directory + r"\Screens\Assets" + frame_number)   
+print(ASSETS_PATH)
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
 
 window = Tk()
-
+#window.attributes('-fullscreen',True)
 window.geometry("480x320")
 window.configure(bg = "#47C4B6")
 
@@ -45,9 +48,9 @@ button_1 = Button(
     relief="flat"
 )
 button_1.place(
-    x=69.0,
-    y=240.0,
-    width=349.0,
+    x=32.0,
+    y=148.0,
+    width=193.0,
     height=60.0
 )
 
@@ -61,9 +64,9 @@ button_2 = Button(
     relief="flat"
 )
 button_2.place(
-    x=36.0,
-    y=160.0,
-    width=200.0,
+    x=247.0,
+    y=148.0,
+    width=193.0,
     height=60.0
 )
 
@@ -77,17 +80,17 @@ button_3 = Button(
     relief="flat"
 )
 button_3.place(
-    x=249.0,
-    y=160.0,
-    width=200.0,
+    x=64.0,
+    y=241.0,
+    width=349.0,
     height=60.0
 )
 
 canvas.create_rectangle(
-    31.0,
+    14.0,
     19.0,
-    456.0,
-    149.0,
+    464.0,
+    139.0,
     fill="#F0E2E7",
     outline="")
 window.resizable(False, False)
