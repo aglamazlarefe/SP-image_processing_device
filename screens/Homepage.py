@@ -3,6 +3,7 @@
 # https://github.com/ParthJadhav/Tkinter-Designer
 
 
+from os import error, getcwd
 from pathlib import Path
 
 # from tkinter import *
@@ -10,16 +11,53 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 
 
-OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"C:\Users\aglam\Documents\python projeleri\SP-image_processing_device\screens\assets\frame3")
-
+current_directory = getcwd()
+print(current_directory)
+frame_number= r"\frame3"
+ASSETS_PATH =  Path(current_directory + r"\Screens\Assets" + frame_number)   
+print(ASSETS_PATH)
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
 
+
+def Writealignment_clicked():
+    try:
+        window.destroy()
+        window.mainloop()
+        import write_alignment
+        
+
+    except error:
+        print(error)
+
+def optikread_clicked():
+    try:
+        window.destroy()
+        window.mainloop()
+        import optik_read 
+        
+
+    except error:
+        print(error)
+
+def sestanima_clicked():
+    try:
+        window.destroy()
+        window.mainloop()
+        import yazılı_ses_tanıma 
+        
+
+    except error:
+        print(error)
+
+
+
+    
 window = Tk()
 
+#window.attributes('-fullscreen',True)
 window.geometry("480x320")
 window.configure(bg = "#47C4B6")
 
@@ -41,15 +79,42 @@ button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_1 clicked"),
+    command=optikread_clicked,
     relief="flat"
 )
-button_1.place(
-    x=19.0,
-    y=107.0,
-    width=125.34329223632812,
-    height=126.0
-)
+
+
+
+
+# Önce ekranın genişliğini alın
+# Ekranın genişliğini ve yüksekliğini alın
+"""screen_width = window.winfo_screenwidth()
+screen_height = window.winfo_screenheight()
+
+# Butonların toplam genişliği ve yüksekliği
+total_button_width = (125.34329223632812 + 125.34326171875 + 125.34326171875)
+button_height = 126.0
+
+# Aralarında boşluk bırakmak için hesaplanmış ekstra boşluk
+x_spacing = (screen_width - total_button_width) / 4
+y_spacing = (screen_height - button_height) / 2
+
+# Butonların ekranın ortasında olması için x ve y koordinatları
+x1 = x_spacing
+x2 = x1 + 125.34329223632812 + x_spacing
+x3 = x2 + 125.34326171875 + x_spacing
+y = y_spacing
+
+# Butonları yerleştirin"""
+#button_1.place(x=x1, y=y, width=125.34329223632812, height=button_height)
+
+button_1.place(x=19.0,y=107.0,width=125.34329223632812,height=126.0)
+
+
+
+
+
+
 
 button_image_2 = PhotoImage(
     file=relative_to_assets("button_2.png"))
@@ -57,15 +122,12 @@ button_2 = Button(
     image=button_image_2,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_2 clicked"),
+    command=Writealignment_clicked,
     relief="flat"
 )
-button_2.place(
-    x=179.0,
-    y=107.0,
-    width=125.34326171875,
-    height=126.0
-)
+#button_2.place(x=x2, y=y, width=125.34326171875, height=button_height)
+button_2.place(x=179.0,y=107.0,width=125.34326171875,height=126.0)
+
 
 button_image_3 = PhotoImage(
     file=relative_to_assets("button_3.png"))
@@ -73,14 +135,14 @@ button_3 = Button(
     image=button_image_3,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_3 clicked"),
+    command=sestanima_clicked,
     relief="flat"
 )
-button_3.place(
-    x=337.0,
-    y=107.0,
-    width=125.34326171875,
-    height=126.0
-)
+#button_3.place(x=x3, y=y, width=125.34326171875, height=button_height)
+button_3.place(x=337.0,y=107.0,width=125.34326171875,height=126.0)
+
 window.resizable(False, False)
 window.mainloop()
+
+
+
