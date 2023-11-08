@@ -8,14 +8,13 @@ from pathlib import Path
 
 # from tkinter import *
 # Explicit imports to satisfy Flake8
-from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
+from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage,Frame
 
 
 current_directory = getcwd()
-print(current_directory)
+
 frame_number= r"\frame3"
 ASSETS_PATH =  Path(current_directory + r"\Screens\Assets" + frame_number)   
-print(ASSETS_PATH)
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
@@ -24,9 +23,9 @@ def relative_to_assets(path: str) -> Path:
 
 def Writealignment_clicked():
     try:
-        window.destroy()
-        window.mainloop()
-        import write_alignment
+        show_page(0)
+
+        
         
 
     except error:
@@ -34,9 +33,8 @@ def Writealignment_clicked():
 
 def optikread_clicked():
     try:
-        window.destroy()
-        window.mainloop()
-        import optik_read 
+       show_page(0)
+
         
 
     except error:
@@ -44,22 +42,33 @@ def optikread_clicked():
 
 def sestanima_clicked():
     try:
-        window.destroy()
-        window.mainloop()
-        import yazılı_ses_tanıma 
+        show_page(0)
+
         
 
     except error:
         print(error)
 
+def show_page(page):
+    for p in pages:
+        p.pack_forget()
+    pages[page].pack()
 
 
     
 window = Tk()
+optik_read = Frame(window)
+write_alignment = Frame(window)
+yazil_ses_tanima = Frame(window)
+pages = [optik_read,write_alignment, yazil_ses_tanima]
+
+
+
 
 #window.attributes('-fullscreen',True)
 window.geometry("480x320")
 window.configure(bg = "#47C4B6")
+
 
 
 canvas = Canvas(
