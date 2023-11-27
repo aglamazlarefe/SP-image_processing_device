@@ -3,6 +3,7 @@
 # https://github.com/ParthJadhav/Tkinter-Designer
 
 
+from logging import root
 from os import error, getcwd
 from pathlib import Path
 
@@ -33,7 +34,7 @@ def Writealignment_clicked():
 
 def optikread_clicked():
     try:
-       show_page(0)
+        show_page(0)
 
         
 
@@ -51,27 +52,29 @@ def sestanima_clicked():
 
 def show_page(page):
     for p in pages:
-        p.pack_forget()
+        p.place_forget()
     pages[page].pack()
 
 
-    
-window = Tk()
+
+root= Tk()
+window = Frame(root)
+
 optik_read = Frame(window)
 write_alignment = Frame(window)
 yazil_ses_tanima = Frame(window)
-pages = [optik_read,write_alignment, yazil_ses_tanima]
+pages = [window,optik_read,write_alignment, yazil_ses_tanima]
 
 
 
 
 #window.attributes('-fullscreen',True)
-window.geometry("480x320")
-window.configure(bg = "#47C4B6")
+root.geometry("480x320")
+#root.configure(bg = "#47C4B6")
 
 
 
-canvas = Canvas(
+"""canvas = Canvas(
     window,
     bg = "#47C4B6",
     height = 320,
@@ -81,10 +84,11 @@ canvas = Canvas(
     relief = "ridge"
 )
 
-canvas.place(x = 0, y = 0)
+canvas.place(x = 0, y = 0)"""
 button_image_1 = PhotoImage(
     file=relative_to_assets("button_1.png"))
 button_1 = Button(
+    window,
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
@@ -128,6 +132,7 @@ button_1.place(x=19.0,y=107.0,width=125.34329223632812,height=126.0)
 button_image_2 = PhotoImage(
     file=relative_to_assets("button_2.png"))
 button_2 = Button(
+    window,
     image=button_image_2,
     borderwidth=0,
     highlightthickness=0,
@@ -141,6 +146,7 @@ button_2.place(x=179.0,y=107.0,width=125.34326171875,height=126.0)
 button_image_3 = PhotoImage(
     file=relative_to_assets("button_3.png"))
 button_3 = Button(
+    window,
     image=button_image_3,
     borderwidth=0,
     highlightthickness=0,
@@ -149,9 +155,10 @@ button_3 = Button(
 )
 #button_3.place(x=x3, y=y, width=125.34326171875, height=button_height)
 button_3.place(x=337.0,y=107.0,width=125.34326171875,height=126.0)
+show_page(0)
 
-window.resizable(False, False)
-window.mainloop()
+root.resizable(False, False)
+root.mainloop()
 
 
 
