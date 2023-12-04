@@ -27,7 +27,7 @@ window.geometry("480x320")
 window.configure(bg = "#47C4B6")
 
 
-canvas = Canvas(
+"""canvas = Canvas(
     window,
     bg = "#47C4B6",
     height = 320,
@@ -37,7 +37,7 @@ canvas = Canvas(
     relief = "ridge"
 )
 
-canvas.place(x = 0, y = 0)
+canvas.place(x = 0, y = 0)"""
 button_image_1 = PhotoImage(
     file=relative_to_assets("button_1.png"))
 button_1 = Button(
