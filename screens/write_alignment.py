@@ -54,12 +54,12 @@ button_1.place(
     height=80.0
 )
 
-canvas.create_rectangle(
+"""canvas.create_rectangle(
     15.0,
     21.0,
     465.0,
     221.0,
     fill="#F0E2E7",
-    outline="")
+    outline="")"""
 window.resizable(False, False)
 window.mainloop()
