@@ -2,8 +2,9 @@ import tkinter as tk
 from tkinter import ttk
 from os import error, getcwd
 from pathlib import Path
-
 from numpy import Infinity
+import cv2
+from PIL import Image, ImageTk
 
 
 LARGEFONT = ("Verdana", 20)
@@ -108,8 +109,71 @@ class optik(tk.Frame):
         def asset_path(png:str):
             return relative_to_assets(png, r"\frame2")
         
+        canvas = tk.Canvas(self, bg="#47C4B6", height=150, width=425, bd=0, highlightthickness=0, relief="ridge")
+        canvas.place(x=0, y=0)
+        self.button_image_1 = tk.PhotoImage(file=asset_path("button_1.png")) 
+        button_1 = tk.Button(self,image=self.button_image_1,borderwidth=0,highlightthickness=0,command=lambda: controller.show_frame(StartPage) ,relief="flat")
+        button_1.place(x=69.0,y=240.0,width=349.0,height=60.0)
         
-        canvas = tk.Canvas(self,bg = "#47C4B6",height = 320,width = 480,bd = 0,highlightthickness = 0,relief = "ridge")
+        self.button_image_2 = tk.PhotoImage(file=asset_path("button_2.png")) 
+        button_2 = tk.Button(self,image=self.button_image_2,borderwidth=0,highlightthickness=0,command=self.take_photo,relief="flat")
+        button_2.place(x=36.0,y=160.0,width=200.0,height=60.0)
+        
+        self.button_image_3 = tk.PhotoImage(file=asset_path("button_3.png")) 
+        button_3 = tk.Button(self,image=self.button_image_3,borderwidth=0,highlightthickness=0,command=lambda: print("button_3 clicked"),relief="flat")
+        button_3.place(x=249.0,y=160.0,width=200.0,height=60.0)
+
+        # Canlı kamera görüntüsünü güncellemek için canvas
+        self.video_source = 0  # 0: bilgisayarın ana kamerası
+        self.vid = cv2.VideoCapture(self.video_source)
+        self.canvas = canvas
+        self.update()
+
+        # ... (diğer kodlar)
+
+    def take_photo(self):
+    # Görüntüyü al
+        ret, frame = self.vid.read()
+
+    # OpenCV görüntüyü PIL formatına dönüştür
+        img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        img = Image.fromarray(img)
+
+    # Tkinter PhotoImage oluştur
+        photo_tk = ImageTk.PhotoImage(image=img)
+    
+        # Fotoğrafı göstermek için yeni bir pencere oluştur
+        photo_window = tk.Toplevel(self)
+        photo_window.title("Çekilen Fotoğraf")
+    
+        # Tkinter Canvas üzerine görüntüyü yerleştir
+        photo_canvas = tk.Canvas(photo_window, width=img.width, height=img.height)
+        photo_canvas.pack()
+        photo_canvas.create_image(0, 0, image=photo_tk, anchor=tk.NW)
+    
+        # Bu satır eklendi
+        self.photo_tk = photo_tk
+    
+        # İstenirse fotoğrafı diske kaydedebilirsiniz
+        img.save("captured_photo.png")
+        
+    def update(self):
+        # Canlı kamera görüntüsünü güncelle
+        ret, frame = self.vid.read()
+        if ret:
+            img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            img = Image.fromarray(img)
+            self.photo = ImageTk.PhotoImage(image=img)
+            self.canvas.create_image(0, 0, image=self.photo, anchor=tk.NW)
+        self.after(10, self.update)
+
+    def __del__(self):
+        # Uygulama kapatıldığında kamera serbest bırak
+        if self.vid.isOpened():
+            self.vid.release()
+        
+
+        """canvas = tk.Canvas(self,bg = "#47C4B6",height = 320,width = 480,bd = 0,highlightthickness = 0,relief = "ridge")
         canvas.place(x = 0, y = 0)
         
         self.button_image_1 = tk.PhotoImage(file=asset_path("button_1.png")) 
@@ -117,7 +181,7 @@ class optik(tk.Frame):
         button_1.place(x=69.0,y=240.0,width=349.0,height=60.0)
         
         self.button_image_2 = tk.PhotoImage(file=asset_path("button_2.png")) 
-        button_2 = tk.Button(self,image=self.button_image_2,borderwidth=0,highlightthickness=0,command=lambda: print("button_2 clicked"),relief="flat")
+        button_2 = tk.Button(self,image=self.button_image_2,borderwidth=0,highlightthickness=0,ommand=self.take_photo,relief="flat")
         button_2.place(x=36.0,y=160.0,width=200.0,height=60.0)
         
         self.button_image_3 = tk.PhotoImage(file=asset_path("button_3.png")) 
@@ -125,6 +189,27 @@ class optik(tk.Frame):
         button_3.place(x=249.0,y=160.0,width=200.0,height=60.0)
         
         canvas.create_rectangle(31.0,19.0,456.0,149.0,fill="#F0E2E7",outline="")
+    def take_photo(self):
+        # Görüntüyü al
+        ret, frame = cv2.VideoCapture(0).read()
+
+        # OpenCV görüntüyü PIL formatına dönüştür
+        img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        img = Image.fromarray(img)
+
+        # Fotoğrafı göstermek için yeni bir pencere oluştur
+        photo_window = tk.Toplevel(self)
+        photo_window.title("Çekilen Fotoğraf")
+
+        # Tkinter Canvas üzerine görüntüyü yerleştir
+        photo_canvas = tk.Canvas(photo_window, width=img.width, height=img.height)
+        photo_canvas.pack()
+        photo_tk = ImageTk.PhotoImage(image=img)
+        photo_canvas.create_image(0, 0, image=photo_tk, anchor=tk.NW)
+
+        # İstenirse fotoğrafı diske kaydedebilirsiniz
+        img.save("captured_photo.png")"""
+
 
 
 
@@ -150,7 +235,7 @@ class sesli(tk.Frame):
         button_2.place(x=247.0,y=148.0,width=193.0,height=60.0)
 
         self.button_image_3 = tk.PhotoImage(file=asset_path("button_3.png"))
-        button_3 = tk.Button(self,image=self.button_image_3,borderwidth=0,highlightthickness=0,command=lambda: print("button_3 clicked"),relief="flat")
+        button_3 = tk.Button(self,image=self.button_image_3,borderwidth=0,highlightthickness=0,command=lambda: controller.show_frame(StartPage),relief="flat")
         button_3.place(x=64.0,y=241.0,width=349.0,height=60.0)
 
         canvas.create_rectangle(14.0,19.0,464.0,139.0,fill="#F0E2E7",outline="")
