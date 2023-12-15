@@ -1,5 +1,6 @@
+from textwrap import fill
 import tkinter as tk
-from tkinter import ttk
+from tkinter import BOTTOM, ttk
 from os import error, getcwd
 from pathlib import Path
 from numpy import Infinity
@@ -30,7 +31,7 @@ class MainApplication(tk.Tk):
         self.frames = {}
 
         for F in (anasayfa, optik, sesli_1,sesli_2, yazı):
-            frame = F(container, self)
+            frame = F(container, self) 
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
 
@@ -101,12 +102,14 @@ class yazı(tk.Frame):
         canvas = tk.Canvas(self,bg = "#47C4B6",height = 320,width = 480,bd = 0,highlightthickness = 0,relief = "ridge")
         canvas.place(x = 0, y = 0)
         self.button_image_1 =tk.PhotoImage(file=asset_path("button_1.png"))
-        button_1 = tk.Button(self,image=self.button_image_1,borderwidth=0,highlightthickness=0,command=lambda: print("button_1 clicked"),relief="flat")
+        button_1 = tk.Button(self,image=self.button_image_1,borderwidth=0,highlightthickness=0,command=lambda: controller.show_frame(anasayfa),relief="flat")
         button_1.place(x=15.0,y=259.0,width=228.6839599609375,height=53.0)
 
-        canvas.create_rectangle(260.0,259.0,467.0,312.0,fill="#F0E2E7",outline="")
+        canvas.create_rectangle(260.0,259.0,467.0,312.0,fill="#F0E2E7",outline="") #buna ses seviye sistemi eklenecek
 
-        canvas.create_rectangle(0.0,0.0,480.0,250.0,fill="#F0E2E7",outline="")
+        label_frame = tk.LabelFrame(self, background="#F0E2E7")
+        
+        label_frame.pack(expand=1, fill="both", side="bottom", pady=(0, 80)) 
 
 
 
@@ -138,7 +141,7 @@ class optik(tk.Frame):
 
         canvas.place(x = 0, y = 0)
         self.button_image_1 = tk.PhotoImage(file=asset_path("button_1.png"))
-        button_1 = tk.Button(self,image=self.button_image_1,borderwidth=0,highlightthickness=0,command=lambda: print("button_1 clicked"),relief="flat")
+        button_1 = tk.Button(self,image=self.button_image_1,borderwidth=0,highlightthickness=0,command=lambda: controller.show_frame(anasayfa),relief="flat")
         button_1.place(x=152.0,y=246.0,width=160.0,height=70.0)
 
         self.button_image_2 = tk.PhotoImage(file=asset_path("button_2.png"))
@@ -146,10 +149,12 @@ class optik(tk.Frame):
         button_2.place(x=9.2552490234375,y=246.0,width=130.0,height=70.0)
 
         self.button_image_3 = tk.PhotoImage(file=asset_path("button_3.png"))
-        button_3 = tk.Button(self,image=self.button_image_3,borderwidth=0,highlightthickness=0,command=lambda: controller.show_frame(anasayfa),relief="flat")
+        button_3 = tk.Button(self,image=self.button_image_3,borderwidth=0,highlightthickness=0,command=lambda: print("button_3 clicked") ,relief="flat")
         button_3.place(x=325.0,y=246.0,width=150.0,height=70.0)
 
-        canvas.create_rectangle(0.0,0.0,480.0,240.0,fill="#F0E2E7",outline="")
+        label_frame = tk.LabelFrame(self, background="#F0E2E7")
+        
+        label_frame.pack(expand=1, fill="both", side="bottom", pady=(0, 80)) 
 
 
 
@@ -175,17 +180,43 @@ class sesli_1(tk.Frame):
         button_1.place(x=313.0,y=247.0,width=165.0,height=70.0)
 
         self.button_image_2 = tk.PhotoImage(file=asset_path("button_2.png"))
-        button_2 = tk.Button(self,image=self.button_image_2,borderwidth=0,highlightthickness=0,command=lambda: print("button_2 clicked"),relief="flat")#foto çekme butonu
+        button_2 = tk.Button(self,image=self.button_image_2,borderwidth=0,highlightthickness=0,command=lambda: print("foto çekiliyor"),relief="flat")#foto çekme butonu
         button_2.place(x=7.0,y=247.0,width=135.0,height=70.0)
 
         self.button_image_3 = tk.PhotoImage(file=asset_path("button_3.png"))
         button_3 = tk.Button(self,image=self.button_image_3,borderwidth=0,highlightthickness=0,command=lambda: print("button_3 clicked"),relief="flat") #sonraki soru butonu
         button_3.place( x=158.0,y=247.0,width=140.0,height=70.0)
 
-        canvas.create_rectangle(0.0,0.0,480.0,240.0,fill="#F0E2E7",outline="")
+        
+        label_frame = tk.LabelFrame(self, background="#F0E2E7")
+        
+        label_frame.pack(expand=1, fill="both", side="bottom", pady=(0, 80))  # Only add padding at the bottom
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class sesli_2(tk.Frame):
+
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         def asset_path(png:str):
@@ -203,10 +234,14 @@ class sesli_2(tk.Frame):
         button_2.place(x=147.0,y=246.0,width=142.8824462890625,height=70.0)
 
         self.button_image_3 = tk.PhotoImage(file=asset_path("button_3.png"))
-        button_3 = tk.Button(self,image=self.button_image_3,borderwidth=0,highlightthickness=0,command=lambda: print("button_3 clicked"),relief="flat")# bitir pdf çıktı al
+        button_3 = tk.Button(self,image=self.button_image_3,borderwidth=0,highlightthickness=0,command=lambda:controller.show_frame(anasayfa),relief="flat")# bitir pdf çıktı al bitir pdf çıktı al
         button_3.place( x=299.0,y=246.0,width=170.0,height=70.0)
 
-        canvas.create_rectangle(23.0,16.0,456.0,233.0,fill="#F0E2E7",outline="")
+        
+        label_frame = tk.LabelFrame(self, background="#F0E2E7")
+        label_frame.pack(expand=1, fill="both", side="bottom", pady=(18, 83),padx=(18)) 
+        
+
 
 
 
@@ -218,8 +253,3 @@ app.geometry("480x320")
 app.resizable(False,False)
 app.title("SP akademik yardımcı")
 app.mainloop()
-
-
-
-
-
