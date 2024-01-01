@@ -1,15 +1,16 @@
 from textwrap import fill
 import tkinter as tk
 from tkinter import BOTTOM, ttk
-from os import error, getcwd
+import os
 from pathlib import Path
 from numpy import Infinity
 import cv2
 from PIL import Image, ImageTk
+import pytesseract
 
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
-
-current_directory = getcwd()
+current_directory = os.getcwd()
 
 def relative_to_assets(path: str,frame_number: str )-> Path:
     return Path(current_directory + r"\screens\assets" + frame_number) / Path(path)
@@ -158,9 +159,7 @@ class optik(tk.Frame):
 
 
 
-    
-    
-    
+
 
 
 
@@ -180,30 +179,76 @@ class sesli_1(tk.Frame):
         button_1.place(x=313.0,y=247.0,width=165.0,height=70.0)
 
         self.button_image_2 = tk.PhotoImage(file=asset_path("button_2.png"))
-        button_2 = tk.Button(self,image=self.button_image_2,borderwidth=0,highlightthickness=0,command=lambda: print("foto çekiliyor"),relief="flat")#foto çekme butonu
+        button_2 = tk.Button(self,image=self.button_image_2,borderwidth=0,highlightthickness=0,command=self.take_photo,relief="flat")#foto çekme butonu
         button_2.place(x=7.0,y=247.0,width=135.0,height=70.0)
 
         self.button_image_3 = tk.PhotoImage(file=asset_path("button_3.png"))
         button_3 = tk.Button(self,image=self.button_image_3,borderwidth=0,highlightthickness=0,command=lambda: print("button_3 clicked"),relief="flat") #sonraki soru butonu
         button_3.place( x=158.0,y=247.0,width=140.0,height=70.0)
+        
+        self.camera = cv2.VideoCapture(0)  # Open the default camera (you may need to change the index)
+
+        self.label_frame = tk.LabelFrame(self, background="#F0E2E7")
+        self.label_frame.pack(expand=1, fill="both", side="bottom", pady=(0, 80))
+
+        self.camera_label = tk.Label(self.label_frame)
+        self.camera_label.pack()
 
         
-        label_frame = tk.LabelFrame(self, background="#F0E2E7")
         
-        label_frame.pack(expand=1, fill="both", side="bottom", pady=(0, 80))  # Only add padding at the bottom
 
         
 
+        self.update_camera()  # Start updating camera stream
 
+    def update_camera(self):
+        # Function to continuously update the camera stream
+        ret, frame = self.camera.read()
 
+        if ret:
+            # Display the captured frame on the label
+            image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            image = Image.fromarray(image)
+            image = ImageTk.PhotoImage(image=image)
+            self.camera_label.configure(image=image)
+            self.camera_label.image = image  # type: ignore # Keep a reference to prevent garbage collection
 
+        # After 10 milliseconds, call the update_camera function again
+        self.after(10, self.update_camera)
 
+    def capture_image(self):
+    # Capture a single frame from the camera
+        ret, frame = self.camera.read()
 
+        if ret:
+            # Convert the frame color space from BGR to RGB
+            rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
+            # Save the captured frame to a file
+            image_path = os.path.join(os.getcwd(), "captured_image.jpg")
+            Image.fromarray(rgb_frame).save(image_path) #grayscale çevirme ve kayıt etme
+            print("Image captured and saved:", image_path)
 
+            # Perform OCR on the captured image
+            text = self.perform_ocr(image_path)
+            print("OCR Result:", text)
+            
 
+    def take_photo(self):
+        # Function to capture an image when button_2 is clicked
+        self.capture_image()
 
+    def perform_ocr(self, image_path):
+        # Use Tesseract OCR to recognize text in the image
+        img = Image.open(image_path)
 
+        text = pytesseract.image_to_string(img,"tur")
+        return text
+
+    def __del__(self):
+        # Release the camera when the frame is destroyed
+        if hasattr(self, 'camera'):
+            self.camera.release()
 
 
 
