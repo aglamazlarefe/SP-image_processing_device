@@ -9,15 +9,23 @@ contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
 
 rectangles = []
 
+
+
+def is_within_bounds(rectangle, image_shape, padding=5):
+    x, y, w, h = cv2.boundingRect(rectangle)
+    return y > padding and x > padding and y + h < image_shape[0] - padding and x + w < image_shape[1] - padding
+
+
+
 for contour in contours:
     perimeter = cv2.arcLength(contour, True)
     approx = cv2.approxPolyDP(contour, 0.02 * perimeter, True)
     
-    if len(approx) == 4:
+    if len(approx) == 4 and is_within_bounds(approx, image.shape):
         rectangles.append(approx)
 
 rectangles_image = image.copy()
-
+texts= []
 for i, rectangle in enumerate(rectangles):
     x, y, w, h = cv2.boundingRect(rectangle)
     roi = image[y:y+h, x:x+w]
@@ -25,13 +33,17 @@ for i, rectangle in enumerate(rectangles):
 
     # Image preprocessing (e.g., contrast stretching, thresholding)
     _, thresh = cv2.threshold(roi_gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU,)
-
-    text = pytesseract.image_to_string(thresh, lang="tur", config='--psm 9') #9, 3,4, 1 en iyisi
-
+    
+    text = pytesseract.image_to_string(thresh, lang="tur", config='--psm 9')  # 9, 3, 4, 1 en iyisi
+    texts.append(text)
     print(f"Dikdörtgen {i+1} - Metin: {text}")
-    cv2.imshow(f"Dikdörtgen {i+1}", thresh)
 
     cv2.putText(rectangles_image, str(i+1), (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+    
+    # Draw bounding box
+    cv2.rectangle(rectangles_image, (x, y), (x+w, y+h), (0, 255, 0), 2)
+
+print(rectangles_image, texts)
 
 cv2.imshow("Dikdörtgenler", cv2.resize(rectangles_image, (600, 900)))
 cv2.waitKey(0)

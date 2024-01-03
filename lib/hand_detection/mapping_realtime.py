@@ -1,4 +1,5 @@
 import pickle
+import time
 import cv2
 import numpy as np
 
@@ -7,11 +8,12 @@ import numpy as np
 #########################
 # Camera settings
 cam_id = 0  # Change this to your desired camera ID
-width, height = 1920, 1080  # Change this to desired image resolution
+cap = cv2.VideoCapture(cam_id)# For Webcam
 #########################
 
 # Initialize variables
-cap = cv2.VideoCapture(cam_id)  # For Webcam
+width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))# Change this to desired image resolution
+height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 cap.set(3, width)  # Set width
 cap.set(4, height)  # Set height
 counter = 0  # Counter to track the number of clicked points
@@ -47,7 +49,7 @@ def find_largest_rectangle_contour(img):
 
 def warp(img):
     # Get the points
-    fileObj = open(r"C:\Users\aglam\Documents\python_projeleri\SP-image_processing_device\map.p", "rb")
+    fileObj = open(r"C:\Users\aglam\Documents\python_projeleri\SP-image_processing_device\map_realtime.p", "rb")
     points = pickle.load(fileObj)
     fileObj.close()
     
@@ -60,8 +62,10 @@ def warp(img):
     # Apply the perspective transform
     result = cv2.warpPerspective(img, M, (width, height))
     # Display the result
-    cv2.imshow("Transformed Image", result)
+    return result
 
+last_warp_time = time.time()
+points_saved = False  # points_saved değişkenini başlat
 
 while True:
     success, img = cap.read()
@@ -77,24 +81,26 @@ while True:
         for point in largest_rect:
             cv2.circle(img, tuple(point[0]), 5, (255, 0, 0), -1)  # -1 fills the circle
 
-        # Save selected points to file
+        # Save selected points to file only if not saved before
+        
         points = largest_rect.reshape(4, 2)
         fileObj = open("map_realtime.p", "wb")
         pickle.dump(points, fileObj)
         fileObj.close()
-        print("Points saved to file: map.p")
+        print("Points saved to file: map_realtime.p")
+        points_saved = True
 
-    warp(img)
-
-
-
-
-
+    # Yalnızca bir kere kaydedildikten sonra ve 3 saniye geçtikten sonra warp fonksiyonunu çağır
+    if points_saved and (time.time() - last_warp_time) >= 3:
+        cv2.imshow("Transformed Image", warp(img))
+        last_warp_time = time.time()  # Son çağrının zamanını güncelle
 
     cv2.imshow("Original Image ", img)
     cv2.imshow("threshold Image ", thresh)
     
-    cv2.waitKey(1)  # Wait for a key press
+    key = cv2.waitKey(1)  # Wait for a key press
+    if key == 27:  # 27 is the ASCII code for the Esc key
+        break
 
 # Release resources
 cap.release()
