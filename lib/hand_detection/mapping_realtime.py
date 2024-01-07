@@ -14,8 +14,8 @@ cap = cv2.VideoCapture(cam_id)# For Webcam
 # Initialize variables
 width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))# Change this to desired image resolution
 height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-cap.set(3, width)  # Set width
-cap.set(4, height)  # Set height
+# cap.set(3, width)  # Set width
+# cap.set(4, height)  # Set height
 counter = 0  # Counter to track the number of clicked points
 
 def find_largest_rectangle_contour(img):

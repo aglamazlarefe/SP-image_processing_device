@@ -1,10 +1,12 @@
+import pickle
 import cv2
 import pytesseract
 
 image = cv2.imread("aligned_photo.jpg")
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 21, 20)
 
-edges = cv2.Canny(gray, 50, 280)
+edges = cv2.Canny(thresh, 50, 280)
 contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
 rectangles = []
@@ -34,9 +36,9 @@ for i, rectangle in enumerate(rectangles):
     # Image preprocessing (e.g., contrast stretching, thresholding)
     _, thresh = cv2.threshold(roi_gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU,)
     
-    text = pytesseract.image_to_string(thresh, lang="tur", config='--psm 9')  # 9, 3, 4, 1 en iyisi
+    text = pytesseract.image_to_string(thresh, lang="tur", config='--psm 4')  # 9, 3, 4, 1 en iyisi
     texts.append(text)
-    print(f"Dikdörtgen {i+1} - Metin: {text}")
+    
 
     cv2.putText(rectangles_image, str(i+1), (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     
@@ -45,6 +47,7 @@ for i, rectangle in enumerate(rectangles):
 
 print(rectangles_image, texts)
 
-cv2.imshow("Dikdörtgenler", cv2.resize(rectangles_image, (600, 900)))
+
+cv2.imshow("Dikdörtgenler", rectangles_image ) #cv2.resize(rectangles_image, (600, 900))
 cv2.waitKey(0)
 cv2.destroyAllWindows()
