@@ -3,11 +3,11 @@ import cv2
 import numpy as np
 
 # Image path
-image_path = r"C:\Users\aglam\Documents\python_projeleri\SP-image_processing_device\foto\tel.jpg"  # Replace with the path to your image file
+image_path =  "foto/sabit4.jpg" # Replace with the path to your image file
 
 # Initialize variables
 img = cv2.imread(image_path)
-width, height = 1920,1080
+width, height = 1080,1920
 #img.shape[1], img.shape[0]  # Get image resolution
 
 counter = 0  # Counter to track the number of clicked points
@@ -42,7 +42,7 @@ def find_largest_rectangle_contour(img):
 
 def warp(img):
     # Get the points
-    fileObj = open("map.p", "rb")
+    fileObj = open("lib/hand_detection/map.p", "rb")
     points = pickle.load(fileObj)
     fileObj.close()
 
@@ -56,7 +56,7 @@ def warp(img):
     result = cv2.warpPerspective(img, M, (width, height))
 
     # Rotate the result to the right
-    result = cv2.rotate(result, cv2.ROTATE_90_CLOCKWISE)
+    #result = cv2.rotate(result, cv2.ROTATE_90_CLOCKWISE)
     mirrored_result = cv2.flip(result, 1)
 
     # Display the result
@@ -78,16 +78,16 @@ if largest_rect is not None and len(largest_rect) == 4:
 
     # Save selected points to file
     points = largest_rect.reshape(4, 2)
-    fileObj = open("map.p", "wb")
+    fileObj = open("lib/hand_detection/map.p", "wb")
     pickle.dump(points, fileObj)
     fileObj.close()
     print("Points saved to file: map.p")
 
 mirrored_result=warp(img)
 
-cv2.imwrite("alinged_photo.jpg", mirrored_result) 
+cv2.imwrite("aligned_photo.jpg", mirrored_result) 
 
 
-cv2.imshow("threshold Image", cv2.resize(thresh, (600, 900)))
 cv2.waitKey(0)  # Wait for a key press to close the window
 cv2.destroyAllWindows()
+import rectangles
