@@ -32,20 +32,32 @@ for i, rectangle in enumerate(rectangles):
     x, y, w, h = cv2.boundingRect(rectangle)
     roi = image[y:y+h, x:x+w]
     roi_gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
+    roi_gray= cv2.flip(roi_gray, 1)
 
     # Image preprocessing (e.g., contrast stretching, thresholding)
     _, thresh = cv2.threshold(roi_gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU,)
     
-    text = pytesseract.image_to_string(thresh, lang="tur", config='--psm 4')  # 9, 3, 4, 1 en iyisi
-    texts.append(text)
+    text = pytesseract.image_to_string(thresh, lang="tur", config='--psm 9')  # 9, 3, 4, 1 en iyisi
+
     
+    texts.append(text)
+    print(f"metin {i+1}: {texts[i]} ")
 
     cv2.putText(rectangles_image, str(i+1), (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     
     # Draw bounding box
     cv2.rectangle(rectangles_image, (x, y), (x+w, y+h), (0, 255, 0), 2)
 
-print(rectangles_image, texts)
+rectangle_name= []
+
+for i in range(min(len(rectangles), len(texts))):
+    combined_element = [rectangles[i], texts[i]]
+    rectangle_name.append(combined_element)
+
+
+fileObj = open("lib/hand_detection/rectangles.p", "wb")
+pickle.dump(rectangle_name, fileObj)
+fileObj.close()
 
 
 cv2.imshow("Dikdörtgenler", rectangles_image ) #cv2.resize(rectangles_image, (600, 900))

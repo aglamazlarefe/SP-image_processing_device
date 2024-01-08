@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 
 # Image path
-image_path =  "foto/sabit4.jpg" # Replace with the path to your image file
+image_path =  "foto/sabit5.jpg" # Replace with the path to your image file
 
 # Initialize variables
 img = cv2.imread(image_path)
@@ -57,11 +57,12 @@ def warp(img):
 
     # Rotate the result to the right
     #result = cv2.rotate(result, cv2.ROTATE_90_CLOCKWISE)
-    mirrored_result = cv2.flip(result, 1)
+    #mirrored_result = cv2.flip(result, 1)
 
     # Display the result
-    cv2.imshow("Transformed Image", cv2.resize(mirrored_result, (600, 900)))
-    return mirrored_result
+    cv2.imshow("Transformed Image", cv2.resize(result, (600, 900)))
+    print(points)
+    return result
 
 # Wait for a key press to close the window
 
@@ -90,4 +91,4 @@ cv2.imwrite("aligned_photo.jpg", mirrored_result)
 
 cv2.waitKey(0)  # Wait for a key press to close the window
 cv2.destroyAllWindows()
-import rectangles
+#import rectangles
