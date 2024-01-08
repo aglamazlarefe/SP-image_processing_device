@@ -1,10 +1,18 @@
 import pickle
+from unittest import result
 import cv2
 import numpy as np
-from rectangles import rectangles,texts
 
 # Load previously defined Regions of Interest (ROIs) polygons from a file
-polygons = []
+
+
+
+fileObj = open("lib/hand_detection/rectangles.p", "rb")
+polygons = pickle.load(fileObj)  
+fileObj.close()
+
+
+
 
 # Set the width and height of the webcam frame
 width, height = 1080,1920
@@ -12,8 +20,8 @@ width, height = 1080,1920
 # Open a connection to the webcam
 cam_id = 0
 cap = cv2.VideoCapture(cam_id)  # For Webcam
-# cap.set(3, width)
-# cap.set(4, height)
+cap.set(4, width)
+cap.set(3, height)
 
 
 
@@ -22,7 +30,7 @@ cap = cv2.VideoCapture(cam_id)  # For Webcam
 def warp_image(img):
     # Get the points
     fileObj = open("lib/hand_detection/map.p", "rb")
-    points = pickle.load(fileObj)
+    points = pickle.load(fileObj)  
     fileObj.close()
 
     # Explicitly convert the points to type numpy.float32
@@ -32,8 +40,9 @@ def warp_image(img):
     M = cv2.getPerspectiveTransform(points, np.array([[0, 0], [width, 0], [width, height], [0, height]], dtype=np.float32))
 
     # Apply the perspective transform
-    result = cv2.warpPerspective(img, M, (width, height))
+    result = cv2.warpPerspective(img, M, ( height,width))
     cv2.imshow("Transformed Image", cv2.resize(result, (600, 900)))
+    
     # Rotate the result to the right
     #result = cv2.rotate(result, cv2.ROTATE_90_CLOCKWISE)
     #mirrored_result = cv2.flip(result, 1)
@@ -47,28 +56,21 @@ def warp_image(img):
 
 
 
-for i in range(min(len(rectangles), len(texts))):
-    combined_element = [rectangles[i], texts[i]]
-    polygons.append(combined_element)
-print(polygons)
 
-while True:
+
+while True: 
     # Read a frame from the webcam
     success, img = cap.read()
     imgWarped, _ = warp_image(img)
 
     key = cv2.waitKey(1)
 
-    # If the "s" key is pressed, save the polygon
-    
+
+
 
     # If the "q" key is pressed, save the polygons and exit the loop
     if key == ord("q"):
         break
-
-    
-
-    
 
     overlay = imgWarped.copy()
     # Draw the collected polygons on the image
@@ -79,9 +81,8 @@ while True:
     cv2.addWeighted(overlay, 0.35, imgWarped, 0.65, 0, imgWarped)
 
     # Display the image with marked polygons
-    cv2.imshow("Warped Image", imgWarped)
+    cv2.imshow("Warped Image", cv2.flip(imgWarped, 1))
     cv2.imshow("Original Image", img)
-
 # Release the video capture object and close all windows
 cap.release()
 cv2.destroyAllWindows()
