@@ -3,6 +3,7 @@ import cv2
 import pytesseract
 
 image = cv2.imread("aligned_photo.jpg")
+image = cv2.flip(image,1)
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 21, 20)
 
@@ -32,7 +33,7 @@ for i, rectangle in enumerate(rectangles):
     x, y, w, h = cv2.boundingRect(rectangle)
     roi = image[y:y+h, x:x+w]
     roi_gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
-    roi_gray= cv2.flip(roi_gray, 1)
+    
 
     # Image preprocessing (e.g., contrast stretching, thresholding)
     _, thresh = cv2.threshold(roi_gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU,)
@@ -63,3 +64,9 @@ fileObj.close()
 cv2.imshow("Dikdörtgenler", rectangles_image ) #cv2.resize(rectangles_image, (600, 900))
 cv2.waitKey(0)
 cv2.destroyAllWindows()
+#241
+#180-170
+#175-165
+
+
+
