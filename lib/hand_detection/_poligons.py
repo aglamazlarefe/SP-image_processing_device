@@ -33,6 +33,7 @@ def warp_image(img):
     points = pickle.load(fileObj)  
     fileObj.close()
 
+    print(points)
     # Explicitly convert the points to type numpy.float32
     points = points.astype(np.float32)
 

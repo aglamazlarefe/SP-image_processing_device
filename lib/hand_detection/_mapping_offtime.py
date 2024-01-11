@@ -3,14 +3,14 @@ import cv2
 import numpy as np
 
 # Image path
-image_path =  "foto/sabit5.jpg" # Replace with the path to your image file
+image_path =  "foto/sabit9.jpg" # Replace with the path to your image file
 
 # Initialize variables
 img = cv2.imread(image_path)
 width, height = 1080,1920
 #img.shape[1], img.shape[0]  # Get image resolution
 
-counter = 0  # Counter to track the number of clicked points
+counter = 0  # Counter to track the number of clicked pointska
 
 def find_largest_rectangle_contour(img):
     """
@@ -40,7 +40,7 @@ def find_largest_rectangle_contour(img):
 
     return largest_rect
 
-def warp(img):
+def warp_image(img):
     # Get the points
     fileObj = open("lib/hand_detection/map.p", "rb")
     points = pickle.load(fileObj)
@@ -84,11 +84,13 @@ if largest_rect is not None and len(largest_rect) == 4:
     fileObj.close()
     print("Points saved to file: map.p")
 
-mirrored_result=warp(img)
+mirrored_result=warp_image(img)
 
 cv2.imwrite("aligned_photo.jpg", mirrored_result) 
 
-
+cv2.imshow("aligned photo", mirrored_result)
 cv2.waitKey(0)  # Wait for a key press to close the window
 cv2.destroyAllWindows()
-#import rectangles
+import _rectangles
+
+import _poligons
