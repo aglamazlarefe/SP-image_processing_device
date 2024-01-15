@@ -1,7 +1,6 @@
 import pyaudio
 from vosk import Model, KaldiRecognizer
 import json
-import sys
 import wave
 
 # Initialize PyAudio
