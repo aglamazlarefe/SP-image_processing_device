@@ -3,14 +3,15 @@ import cv2
 import numpy as np
 
 # Image path
-image_path =  "foto/sabit9.jpg" # Replace with the path to your image file
+image_path = "foto/cihaz8.jpg"  # Replace with the path to your image file
 
 # Initialize variables
 img = cv2.imread(image_path)
-width, height = 1080,1920
-#img.shape[1], img.shape[0]  # Get image resolution
+width, height = 1080, 1920
+# img.shape[1], img.shape[0]  # Get image resolution
 
 counter = 0  # Counter to track the number of clicked pointska
+
 
 def find_largest_rectangle_contour(img):
     """
@@ -25,7 +26,9 @@ def find_largest_rectangle_contour(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     global thresh
 
-    thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 21, 10)
+    thresh = cv2.adaptiveThreshold(
+        gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 21, 10
+    )
     contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     largest_rect = None
@@ -40,6 +43,7 @@ def find_largest_rectangle_contour(img):
 
     return largest_rect
 
+
 def warp_image(img):
     # Get the points
     fileObj = open("lib/hand_detection/map.p", "rb")
@@ -50,19 +54,23 @@ def warp_image(img):
     points = points.astype(np.float32)
 
     # Compute the perspective transform matrix
-    M = cv2.getPerspectiveTransform(points, np.array([[0, 0], [width, 0], [width, height], [0, height]], dtype=np.float32))
+    M = cv2.getPerspectiveTransform(
+        points,
+        np.array([[0, 0], [width, 0], [width, height], [0, height]], dtype=np.float32),
+    )
 
     # Apply the perspective transform
     result = cv2.warpPerspective(img, M, (width, height))
 
     # Rotate the result to the right
-    #result = cv2.rotate(result, cv2.ROTATE_90_CLOCKWISE)
-    #mirrored_result = cv2.flip(result, 1)
+    # result = cv2.rotate(result, cv2.ROTATE_90_CLOCKWISE)
+    # mirrored_result = cv2.flip(result, 1)
 
     # Display the result
-    cv2.imshow("Transformed Image", cv2.resize(result, (600, 900)))
+
     print(points)
     return result
+
 
 # Wait for a key press to close the window
 
@@ -84,13 +92,10 @@ if largest_rect is not None and len(largest_rect) == 4:
     fileObj.close()
     print("Points saved to file: map.p")
 
-mirrored_result=warp_image(img)
+mirrored_result = warp_image(img)
 
-cv2.imwrite("aligned_photo.jpg", mirrored_result) 
 
-cv2.imshow("aligned photo", mirrored_result)
-cv2.waitKey(0)  # Wait for a key press to close the window
+# Wait for a key press to close the window
 cv2.destroyAllWindows()
 import _rectangles
-
-import _poligons
+import _finger_detect

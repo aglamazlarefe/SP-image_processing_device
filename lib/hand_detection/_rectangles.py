@@ -3,7 +3,7 @@ import cv2
 import pytesseract
 
 image = cv2.imread("aligned_photo.jpg")
-image = cv2.flip(image,1)
+
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 21, 20)
 
@@ -38,11 +38,12 @@ for i, rectangle in enumerate(rectangles):
     # Image preprocessing (e.g., contrast stretching, thresholding)
     _, thresh = cv2.threshold(roi_gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU,)
     
+    thresh = cv2.flip(thresh,1)
     text = pytesseract.image_to_string(thresh, lang="tur", config='--psm 9')  # 9, 3, 4, 1 en iyisi
-
+    thresh = cv2.flip(thresh,1)
     
     texts.append(text)
-    print(f"metin {i+1}: {texts[i]} ")
+    
 
     cv2.putText(rectangles_image, str(i+1), (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     
@@ -61,7 +62,7 @@ pickle.dump(rectangle_name, fileObj)
 fileObj.close()
 
 
-cv2.imshow("Dikdörtgenler", rectangles_image ) #cv2.resize(rectangles_image, (600, 900))
+#cv2.resize(rectangles_image, (600, 900))
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 #241
