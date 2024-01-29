@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 
 # Image path
-image_path = "foto/cihaz8.jpg"  # Replace with the path to your image file
+image_path = "captured_image.jpg"  # Replace with the path to your image file
 
 # Initialize variables
 img = cv2.imread(image_path)
@@ -68,7 +68,7 @@ def warp_image(img):
 
     # Display the result
 
-    print(points)
+    
     return result
 
 
@@ -93,9 +93,11 @@ if largest_rect is not None and len(largest_rect) == 4:
     print("Points saved to file: map.p")
 
 mirrored_result = warp_image(img)
-
-
+cv2.waitKey(0)
 # Wait for a key press to close the window
 cv2.destroyAllWindows()
-import _rectangles
-import _finger_detect
+
+
+from lib.hand_detection import _rectangles
+from lib.hand_detection import _finger_detect
+
