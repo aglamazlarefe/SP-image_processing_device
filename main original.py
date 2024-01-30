@@ -174,7 +174,7 @@ class speech_reco(tk.Frame):
 
 
         self.button_image_3 = tk.PhotoImage(file=relative_to_assets("button_3.png"))
-        button_3 = tk.Button(self, image=self.button_image_3, borderwidth=0, highlightthickness=0, command= self.navigate_and_show_results, relief="flat")  
+        button_3 = tk.Button(self, image=self.button_image_3, borderwidth=0, highlightthickness=0, command=self.navigate_and_show_results, relief="flat")  
         button_3.place(x=299.0, y=246.0, width=170.0, height=70.0)
 
 
@@ -188,7 +188,6 @@ class speech_reco(tk.Frame):
         self.transcription_label.pack()
 
         self.words = []  # words listesi sınıfın bir özelliği olacak şekilde taşındı
-
 
 
     def transcribe_audio(self):
@@ -226,24 +225,24 @@ class speech_reco(tk.Frame):
         except Exception as e:
             print(f"An error occurred: {e}")
             return ""
+        
+
+
 
     def transcribe_and_update_label(self):
-        # Bu fonksiyon, "Ses Kayıt" butonuna tıklandığında çalışır.
         transcription = self.transcribe_audio()
-        
-        # Update the label with the new transcription
-        self.transcription_label.config(text= transcription)  # type: ignore
+        if transcription is not None and transcription != "":
+            self.transcription_label.config(text=transcription)
 
     def show_results(self):
-        # Bu fonksiyon, "Sonraki Soru" butonuna tıklandığında çalışır.
         current_transcription = self.transcription_label.cget("text")
-        self.transcription_label.config(text= "")
-        # Append the transcription to the words list only when the "Sonraki Soru" button is clicked
+        self.transcription_label.config(text="")
         self.words.append(current_transcription)
         print("Words:", self.words)
 
     def navigate_and_show_results(self):
-    # Bu fonksiyon, "Bitir ve PDF Al" butonuna tıklandığında çalışır.
+        # Create a new thread for speech recognition
+        # # Bu fonksiyon, "Bitir ve PDF Al" butonuna tıklandığında çalışır.
     # self.words listesini yazdırabilir ve anasayfaya geçebilirsiniz.
         
         # Update the label with the new transcription
@@ -264,6 +263,94 @@ class speech_reco(tk.Frame):
 
         # Doğru şekilde self.controller kullanın
         self.controller.show_frame(anasayfa)
+
+    def process_speech(self):
+        transcription = self.transcribe_audio()
+        if transcription is not None and transcription != "":
+        # Update the label with the new transcription
+            self.transcription_label.config(text=transcription)
+
+        # Additional processing if needed
+        # ...
+
+        # Show results in GUI
+        self.show_results()
+
+        # If you need to perform GUI operations, use the after method to schedule them
+        # self.after(0, self.show_results)
+    # def transcribe_audio(self):
+    #     # Initialize the recognizer
+    #     vosk.SetLogLevel(-1)
+    #     recognizer = sr.Recognizer()
+
+    #     # Initialize the microphone
+    #     with sr.Microphone() as source:
+    #         print("Say something...")
+    #         # Capture audio data in a format compatible with Vosk
+    #         audio_data = recognizer.listen(source)
+
+    #     try:
+    #         # Use Vosk to transcribe the speech
+    #         model = vosk.Model("voice_recognation/vosk-model-small-tr-0.3")
+    #         recognizer_vosk = vosk.KaldiRecognizer(model, 16000)
+
+    #         # Get raw audio data from SpeechRecognition and pass it to Vosk
+    #         audio_data_vosk = audio_data.get_raw_data(convert_rate=16000, convert_width=2)
+    #         recognizer_vosk.AcceptWaveform(audio_data_vosk)
+
+    #         # Get the transcription result from Vosk
+    #         result_json = json.loads(recognizer_vosk.Result())
+
+    #         # Extract and return the recognized text
+    #         transcription = result_json.get("text", "")
+    #         print("Transcription:", transcription)
+    #         return transcription
+
+    #     except sr.UnknownValueError:
+    #         print("Speech Recognition could not understand audio.")
+    #     except sr.RequestError as e:
+    #         print(f"Could not request results from Google Speech Recognition service; {e}")
+    #     except Exception as e:
+    #         print(f"An error occurred: {e}")
+    #         return ""
+
+    # def transcribe_and_update_label(self):
+    #     # Bu fonksiyon, "Ses Kayıt" butonuna tıklandığında çalışır.
+    #     transcription = self.transcribe_audio()
+        
+    #     # Update the label with the new transcription
+    #     self.transcription_label.config(text= transcription)  # type: ignore
+
+    # def show_results(self):
+    #     # Bu fonksiyon, "Sonraki Soru" butonuna tıklandığında çalışır.
+    #     current_transcription = self.transcription_label.cget("text")
+    #     self.transcription_label.config(text= "")
+    #     # Append the transcription to the words list only when the "Sonraki Soru" button is clicked
+    #     self.words.append(current_transcription)
+    #     print("Words:", self.words)
+
+    # def navigate_and_show_results(self):
+    # # Bu fonksiyon, "Bitir ve PDF Al" butonuna tıklandığında çalışır.
+    # # self.words listesini yazdırabilir ve anasayfaya geçebilirsiniz.
+        
+    #     # Update the label with the new transcription
+
+    #     from lib.hand_detection.pdf import write_to_pdf
+    #     metin = ""
+    #     if self.words:
+    #         for kelime in self.words:
+    #             metin = metin + kelime + "\n"
+    #         desktop_path = os.path.join(os.path.expanduser('~'), 'Desktop')  # usb path eklenecek
+    #         filename = "sesle_yazı.pdf"
+    #         output_path = os.path.join(desktop_path, filename)
+
+    #         write_to_pdf(output_path, metin)
+    #         print(f"PDF dosyası oluşturuldu: ")
+    #     else:
+    #         print("kelime bulunamadı")
+
+    #     # Doğru şekilde self.controller kullanın
+    #     self.controller.show_frame(anasayfa)
 
 
 
