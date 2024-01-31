@@ -1,8 +1,11 @@
+from concurrent.futures import thread
+import threading
 import tkinter as tk
 import os
 import cv2
 from PIL import Image, ImageTk
 import speech_recognition as sr
+from sympy import true
 import vosk
 
 import json
@@ -408,6 +411,10 @@ class el_tanıma_2(tk.Frame):
 class speech_reco(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
+        self.recognizer = sr.Recognizer()
+
+        self.thread = None  # Add a thread attribute
+        self.terminate_thread = False  # Flag to signal thread termination
         
         # frame 3
         def relative_to_assets(file: str):
@@ -451,19 +458,18 @@ class speech_reco(tk.Frame):
 
 
     def transcribe_audio(self):
-        # Initialize the recognizer
         vosk.SetLogLevel(-1)
-        recognizer = sr.Recognizer()
 
         # Initialize the microphone
         with sr.Microphone() as source:
             print("Say something...")
             # Capture audio data in a format compatible with Vosk
-            audio_data = recognizer.listen(source)
+            audio_data = self.recognizer.listen(source)
+
 
         try:
             # Use Vosk to transcribe the speech
-            model = vosk.Model("voice_recognation/vosk-model-small-tr-0.3")
+            model = vosk.Model("lib/voice_recognation/vosk-model-small-tr-0.3")
             recognizer_vosk = vosk.KaldiRecognizer(model, 16000)
 
             # Get raw audio data from SpeechRecognition and pass it to Vosk
@@ -490,9 +496,16 @@ class speech_reco(tk.Frame):
 
 
     def transcribe_and_update_label(self):
-        transcription = self.transcribe_audio()
-        if transcription is not None and transcription != "":
-            self.transcription_label.config(text=transcription)
+        # Check if a thread is already running and wait for it to complete
+        if self.thread and self.thread.is_alive():
+            self.terminate_thread = True  # Set the flag to terminate the thread
+            self.thread.join()
+
+        # Create a new thread for speech recognition
+        self.terminate_thread = False  # Reset the flag
+        self.thread = threading.Thread(target=self.process_speech)
+        self.thread.start()
+        
 
     def show_results(self):
         current_transcription = self.transcription_label.cget("text")
@@ -506,6 +519,11 @@ class speech_reco(tk.Frame):
     # self.words listesini yazdırabilir ve anasayfaya geçebilirsiniz.
         
         # Update the label with the new transcription
+        if self.thread is not None: 
+            self.terminate_thread = True  # Set the flag to terminate the thread
+            self.thread.join()# Wait for the thread to complete
+            
+
 
         from lib.hand_detection.pdf import write_to_pdf
         metin = ""
@@ -529,12 +547,14 @@ class speech_reco(tk.Frame):
         if transcription is not None and transcription != "":
         # Update the label with the new transcription
             self.transcription_label.config(text=transcription)
-
+        if self.terminate_thread:
+            print("Thread terminated.")
+            return
         # Additional processing if needed
         # ...
 
         # Show results in GUI
-        self.show_results()
+        
 
         # If you need to perform GUI operations, use the after method to schedule them
         # self.after(0, self.show_results)
@@ -614,6 +634,8 @@ class speech_reco(tk.Frame):
 
     #     # Doğru şekilde self.controller kullanın
     #     self.controller.show_frame(anasayfa)
+
+
 class optik(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
