@@ -1,14 +1,7 @@
-
-from textwrap import fill
 import tkinter as tk
-from tkinter import BOTTOM, ttk
 import os
-from pathlib import Path
-from matplotlib.pylab import f
-from numpy import Infinity
 import cv2
 from PIL import Image, ImageTk
-import pytesseract
 import speech_recognition as sr
 import vosk
 
@@ -19,30 +12,36 @@ import json
 
 current_directory = os.getcwd() 
 
+class eskikodlarmainapp():
 
-# class MainApplication(tk.Tk):
-#     def __init__(self, *args, **kwargs):
-#         tk.Tk.__init__(self, *args, **kwargs)
+    # class MainApplication(tk.Tk):
+    #     def __init__(self, *args, **kwargs):
+    #         tk.Tk.__init__(self, *args, **kwargs)
 
-#         container = tk.Frame(self)
-#         container.pack(side="top", fill="both", expand=True)
+    #         container = tk.Frame(self)
+    #         container.pack(side="top", fill="both", expand=True)
 
-#         container.grid_rowconfigure(0, weight=1)
-#         container.grid_columnconfigure(0, weight=1)
+    #         container.grid_rowconfigure(0, weight=1)
+    #         container.grid_columnconfigure(0, weight=1)
 
-#         self.frames = {}
+    #         self.frames = {}
 
-#         for F in (anasayfa, optik, speech_reco,  el_tanıma_1,el_tanıma_2):
-#             frame = F(container, self) 
-#             self.frames[F] = frame
-#             frame.grid(row=0, column=0, sticky="nsew")
+    #         for F in (anasayfa, optik, speech_reco,  el_tanıma_1,el_tanıma_2):
+    #             frame = F(container, self) 
+    #             self.frames[F] = frame
+    #             frame.grid(row=0, column=0, sticky="nsew")
 
-#         self.show_frame(anasayfa)
-        
+    #         self.show_frame(anasayfa)
+            
 
-#     def show_frame(self, cont):
-#         frame = self.frames[cont]
-#         frame.tkraise()
+    #     def show_frame(self, cont):
+    #         frame = self.frames[cont]
+    #         frame.tkraise()
+    def name(self):
+        pass
+
+
+
 class MainApplication(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
@@ -134,7 +133,7 @@ class el_tanıma_1(tk.Frame):
         button_1.place(x=9.2552490234375, y=246.0, width=300.7447509765625, height=70.0)
         
         self.button_image_2 = tk.PhotoImage(file=relative_to_assets("button_2.png"))
-        button_2 = tk.Button(self, image=self.button_image_2, borderwidth=0, highlightthickness=0, relief="flat")  # command=self.go_ahead # devam etme butonu
+        button_2 = tk.Button(self, image=self.button_image_2, borderwidth=0, command=self.next_page, highlightthickness=0, relief="flat")  # devam etme butonu
         button_2.place(x=323.0, y=246.0, width=150.0, height=70.0)
 
         self.label_frame = tk.LabelFrame(self, background="#F0E2E7")
@@ -147,6 +146,15 @@ class el_tanıma_1(tk.Frame):
         self.camera_label.pack()
 
         self.cap = None  # Camera is set to None before it's started
+    
+    
+    
+    def next_page(self):
+        self.stop_camera()
+        self.controller.show_frame(el_tanıma_2)
+
+
+
 
     def start_camera(self):
         self.cap = cv2.VideoCapture(0)
@@ -155,15 +163,16 @@ class el_tanıma_1(tk.Frame):
         self.update_camera()
 
     def update_camera(self):
-        ret, frame = self.cap.read()   # type: ignore
+        if self.cap is not None:
+            ret, frame = self.cap.read()   
 
-        if ret:
-            rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            rgb_frame = cv2.resize(rgb_frame, (480, 270))
-            img = Image.fromarray(rgb_frame)
-            img = ImageTk.PhotoImage(image=img)
-            self.camera_label.img = img  # type: ignore
-            self.camera_label.config(image=img)
+            if ret:
+                rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                rgb_frame = cv2.resize(rgb_frame, (480, 270))
+                img = Image.fromarray(rgb_frame)
+                img = ImageTk.PhotoImage(image=img)
+                self.camera_label.img = img  # type: ignore
+                self.camera_label.config(image=img)
 
         self.after(10, self.update_camera)
 
@@ -171,24 +180,26 @@ class el_tanıma_1(tk.Frame):
         if self.cap is not None:
             self.cap.release()
             self.cap = None
+        
 
     def take_photo(self):
-        ret, frame = self.cap.read() # type: ignore
+        if self.cap is not None:
+            ret, frame = self.cap.read() 
 
-        if ret:
-            cv2.imwrite("captured_photo.png", frame)
-            captured_img = Image.open("captured_photo.png")
-            resized_img = captured_img.resize((480, 270))
-            resized_img = ImageTk.PhotoImage(resized_img)
-            self.captured_image_label.img = resized_img  # type: ignore
-            self.captured_image_label.config(image=resized_img)
+            if ret:
+                cv2.imwrite("captured_photo.png", frame)
+                captured_img = Image.open("captured_photo.png")
+                resized_img = captured_img.resize((480, 270))
+                resized_img = ImageTk.PhotoImage(resized_img)
+                self.captured_image_label.img = resized_img  # type: ignore
+                self.captured_image_label.config(image=resized_img)
 
     def __del__(self):
         self.stop_camera()
 
 
 
-class eskikodlar():
+class eskikodlareltanıma1():
     # class el_tanıma_1(tk.Frame):
     #     def __init__(self, parent, controller):
     #         tk.Frame.__init__(self, parent)
@@ -389,8 +400,8 @@ class el_tanıma_2(tk.Frame):
 
         
         
-        # label_frame = tk.LabelFrame(self, background="#F0E2E7")
-        # label_frame.pack(expand=1, fill="both", side="bottom", pady=(18, 83),padx=(18)) 
+        label_frame = tk.LabelFrame(self, background="#F0E2E7")
+        label_frame.pack(expand=1, fill="both", side="bottom", pady=(18, 83),padx=(18)) 
         
 
 
