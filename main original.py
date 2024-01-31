@@ -133,7 +133,7 @@ class el_tanıma_1(tk.Frame):
         button_1.place(x=9.2552490234375, y=246.0, width=300.7447509765625, height=70.0)
         
         self.button_image_2 = tk.PhotoImage(file=relative_to_assets("button_2.png"))
-        button_2 = tk.Button(self, image=self.button_image_2, borderwidth=0, highlightthickness=0, relief="flat")  # command=self.go_ahead # devam etme butonu
+        button_2 = tk.Button(self, image=self.button_image_2, borderwidth=0, command=self.next_page, highlightthickness=0, relief="flat")  # devam etme butonu
         button_2.place(x=323.0, y=246.0, width=150.0, height=70.0)
 
         self.label_frame = tk.LabelFrame(self, background="#F0E2E7")
@@ -146,6 +146,15 @@ class el_tanıma_1(tk.Frame):
         self.camera_label.pack()
 
         self.cap = None  # Camera is set to None before it's started
+    
+    
+    
+    def next_page(self):
+        self.stop_camera()
+        self.controller.show_frame(el_tanıma_2)
+
+
+
 
     def start_camera(self):
         self.cap = cv2.VideoCapture(0)
@@ -171,6 +180,7 @@ class el_tanıma_1(tk.Frame):
         if self.cap is not None:
             self.cap.release()
             self.cap = None
+        
 
     def take_photo(self):
         if self.cap is not None:
@@ -390,8 +400,8 @@ class el_tanıma_2(tk.Frame):
 
         
         
-        # label_frame = tk.LabelFrame(self, background="#F0E2E7")
-        # label_frame.pack(expand=1, fill="both", side="bottom", pady=(18, 83),padx=(18)) 
+        label_frame = tk.LabelFrame(self, background="#F0E2E7")
+        label_frame.pack(expand=1, fill="both", side="bottom", pady=(18, 83),padx=(18)) 
         
 
 
