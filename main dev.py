@@ -5,9 +5,7 @@ import os
 import cv2
 from PIL import Image, ImageTk
 import speech_recognition as sr
-from sympy import true
 import vosk
-
 import json
 
 
@@ -153,7 +151,7 @@ class el_tanıma_1(tk.Frame):
     
     
     def next_page(self):
-        self.stop_camera()
+        
         self.controller.show_frame(el_tanıma_2)
 
 
@@ -196,6 +194,7 @@ class el_tanıma_1(tk.Frame):
                 resized_img = ImageTk.PhotoImage(resized_img)
                 self.captured_image_label.img = resized_img  # type: ignore
                 self.captured_image_label.config(image=resized_img)
+        self.stop_camera()
 
     def __del__(self):
         self.stop_camera()
