@@ -98,6 +98,5 @@ cv2.waitKey(0)
 cv2.destroyAllWindows()
 
 
-from lib.hand_detection import _rectangles
-from lib.hand_detection import _finger_detect
+
 

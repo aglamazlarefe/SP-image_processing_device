@@ -1,4 +1,3 @@
-from concurrent.futures import thread
 import threading
 import tkinter as tk
 import os
@@ -151,8 +150,10 @@ class el_tanıma_1(tk.Frame):
     
     
     def next_page(self):
-        
         self.controller.show_frame(el_tanıma_2)
+        import lib.hand_detection._mapping_offtime
+        import lib.hand_detection._rectangles
+        import lib.hand_detection._finger_detect
 
 
 
@@ -195,9 +196,11 @@ class el_tanıma_1(tk.Frame):
                 self.captured_image_label.img = resized_img  # type: ignore
                 self.captured_image_label.config(image=resized_img)
         self.stop_camera()
+        
 
     def __del__(self):
         self.stop_camera()
+
 
 
 
@@ -653,15 +656,9 @@ class optik(tk.Frame):
         button_1.place(x=248.0, y=246.0, width=224.0, height=70.0)
 
 
-
-
-
         self.button_image_2 = tk.PhotoImage(file=relative_to_assets("button_2.png"))
         button_2 = tk.Button(self,image=self.button_image_2,borderwidth=0,highlightthickness=0,command=lambda: print("button_2 clicked"),relief="flat")
         button_2.place(x=11.0, y=246.0, width=224.0, height=70.0)
-
-
-
 
 
         label_frame = tk.LabelFrame(self, background="#F0E2E7")

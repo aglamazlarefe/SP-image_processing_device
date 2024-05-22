@@ -1,13 +1,11 @@
-from concurrent.futures import thread
+
 import threading
 import tkinter as tk
 import os
 import cv2
 from PIL import Image, ImageTk
 import speech_recognition as sr
-from sympy import true
 import vosk
-
 import json
 
 
@@ -88,7 +86,7 @@ class anasayfa(tk.Frame):
         canvas.place(x = 0, y = 0)
         
         self.button_image_1 = tk.PhotoImage(file=relative_to_assets("button_1.png"))
-        button_1 = tk.Button(self,image=self.button_image_1,borderwidth=0,highlightthickness=0,command=lambda: controller.show_frame(optik),relief="flat")        
+        button_1 = tk.Button(self,image=self.button_image_1,borderwidth=0,highlightthickness=0,command=self.optik_contoller,relief="flat")        
         button_1.place(x=15.0,y=10.0,width=450.0,height=85.0)
 
 
@@ -113,6 +111,12 @@ class anasayfa(tk.Frame):
         self.controller.frames[el_tanıma_1] = el_tanima_frame
         el_tanima_frame.grid(row=0, column=0, sticky="nsew")  # Use grid instead of pack
         el_tanima_frame.start_camera()
+    
+    def optik_contoller(self):
+        optik_frame = optik(self.controller.container, self.controller)
+        self.controller.frames[optik] = optik_frame
+        optik_frame.grid(row=0, column=0, sticky="nsew")  # Use grid instead of pack
+        #optik_frame.start_camera()
 
 
 
@@ -121,7 +125,7 @@ class el_tanıma_1(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
-        # ... (other code)
+        
 
         #frame 1
         def relative_to_assets(file: str):
@@ -153,9 +157,12 @@ class el_tanıma_1(tk.Frame):
     
     
     def next_page(self):
-        self.stop_camera()
         self.controller.show_frame(el_tanıma_2)
-
+        import lib.hand_detection._mapping_offtime
+        import lib.hand_detection._rectangles
+        import lib.hand_detection._finger_detect
+        
+        
 
 
 
@@ -196,6 +203,8 @@ class el_tanıma_1(tk.Frame):
                 resized_img = ImageTk.PhotoImage(resized_img)
                 self.captured_image_label.img = resized_img  # type: ignore
                 self.captured_image_label.config(image=resized_img)
+        #self.stop_camera()
+        
 
     def __del__(self):
         self.stop_camera()
@@ -639,7 +648,7 @@ class speech_reco(tk.Frame):
 class optik(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-
+        self.controller= controller
         #Frame 0
         def relative_to_assets(file: str):
             file= "Screens/assets/frame0/"+ file
@@ -650,7 +659,7 @@ class optik(tk.Frame):
 
         canvas.place(x = 0, y = 0)
         self.button_image_1 = tk.PhotoImage(file=relative_to_assets("button_1.png"))
-        button_1 = tk.Button(self,image=self.button_image_1,borderwidth=0,highlightthickness=0,command=lambda: controller.show_frame(anasayfa),relief="flat")
+        button_1 = tk.Button(self,image=self.button_image_1,borderwidth=0,highlightthickness=0,command=lambda: controller.show_frame(anasayfa),relief="flat")#bitir 
         button_1.place(x=248.0, y=246.0, width=224.0, height=70.0)
 
 
@@ -658,16 +667,96 @@ class optik(tk.Frame):
 
 
         self.button_image_2 = tk.PhotoImage(file=relative_to_assets("button_2.png"))
-        button_2 = tk.Button(self,image=self.button_image_2,borderwidth=0,highlightthickness=0,command=lambda: print("button_2 clicked"),relief="flat")
+        button_2 = tk.Button(self,image=self.button_image_2,borderwidth=0,highlightthickness=0,command=self.take_photo,relief="flat")#foto çek
         button_2.place(x=11.0, y=246.0, width=224.0, height=70.0)
 
 
 
-
-
-        label_frame = tk.LabelFrame(self, background="#F0E2E7")
+        self.label_frame = tk.LabelFrame(self, background="#F0E2E7")
+        self.label_frame.pack(expand=1, fill="both", side="bottom", pady=(0, 80))
         
-        label_frame.pack(expand=1, fill="both", side="bottom", pady=(0, 80)) 
+        self.captured_image_label = tk.Label(self.label_frame)
+        self.captured_image_label.pack()
+        
+        self.camera_label = tk.Label(self.label_frame)
+        self.camera_label.pack()
+
+        self.cap = None  # Camera is set to None before it's started
+    
+    
+    
+    def next_page(self):
+        self.controller.show_frame(anasayfa)
+        import lib.detect_chics.detect_rectangles
+        
+        
+        
+
+
+
+    def start_camera(self):
+        self.cap = cv2.VideoCapture(0)
+        self.cap.set(4, 1080)
+        self.cap.set(3, 1920)
+        self.update_camera()
+
+    def update_camera(self):
+        if self.cap is not None:
+            ret, frame = self.cap.read()   
+
+            if ret:
+                rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                rgb_frame = cv2.resize(rgb_frame, (480, 270))
+                img = Image.fromarray(rgb_frame)
+                img = ImageTk.PhotoImage(image=img)
+                self.camera_label.img = img  # type: ignore
+                self.camera_label.config(image=img)
+
+        self.after(10, self.update_camera)
+
+    def stop_camera(self):
+        if self.cap is not None:
+            self.cap.release()
+            self.cap = None
+        
+
+    def take_photo(self):
+        if self.cap is not None:
+            ret, frame = self.cap.read() 
+
+            if ret:
+                cv2.imwrite("captured_photo_optic.png", frame)
+                captured_img = Image.open("captured_photo_optic.png")
+                resized_img = captured_img.resize((480, 270))
+                resized_img = ImageTk.PhotoImage(resized_img)
+                self.captured_image_label.img = resized_img  # type: ignore
+                self.captured_image_label.config(image=resized_img)
+        self.stop_camera()
+        
+
+    def __del__(self):
+        self.stop_camera()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 app = MainApplication()
