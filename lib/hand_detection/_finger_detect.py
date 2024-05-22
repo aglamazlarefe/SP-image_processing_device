@@ -6,17 +6,15 @@ import cvzone
 import numpy as np  # NumPy library for numerical operations
 from cvzone.HandTrackingModule import HandDetector
 import time
-
-
-
-
 from lib.hand_detection.pdf import write_to_pdf
+
+
 
 # Örnek kullanım
 
 # pdfmetrics.registerFont(TTFont('Arial', 'Arial.ttf'))
 
-button_x, button_y, button_width, button_height = 35, 35, 150, 70
+button_x, button_y, button_width, button_height = 11, 11, 75, 35
 button_text = "Exit"
 exit_flag = False
 
@@ -214,16 +212,16 @@ def create_overlay_image(polygons, warped_point, imgOverlay):
 
 def draw_exit_button(img):
     cv2.rectangle(img, (button_x, button_y), (button_x + button_width, button_y + button_height), (255, 0, 0), cv2.FILLED)
-    cv2.putText(img, button_text, (button_x + 10, button_y + 35), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+    cv2.putText(img, button_text, (button_x + 10, button_y + 17), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA)
 
 
 def mouse_callback(event, x, y, flags, param):
     global exit_flag
 
     if event == cv2.EVENT_LBUTTONDOWN:
-        # Check if the mouse click is within the button region
         if button_x < x < button_x + button_width and button_y < y < button_y + button_height:
             exit_flag = True
+
 
 
 
@@ -256,6 +254,8 @@ while True:
 
     
     imgOutput = cv2.flip(imgOutput, 1)
+    imgOutput= cv2.resize(imgOutput, (480, 320))
+
     #imgOutput = cv2.rotate(img,cv2.ROTATE_90_COUNTERCLOCKWISE )
     draw_exit_button(imgOutput)
     # Display the current question
@@ -265,7 +265,7 @@ while True:
     if exit_flag:
         break
 
-    cv2.imshow("Output Image", cv2.resize(imgOutput, (480, 320)))
+    cv2.imshow("Output Image", imgOutput)# cv2.resize(imgOutput, (480, 320)
 
     key = cv2.waitKey(1)
 
