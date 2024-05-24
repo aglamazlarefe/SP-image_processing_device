@@ -8,6 +8,7 @@ from cvzone.HandTrackingModule import HandDetector
 import time
 from lib.hand_detection.pdf import write_to_pdf
 
+#from pdf import write_to_pdf
 
 
 # Örnek kullanım

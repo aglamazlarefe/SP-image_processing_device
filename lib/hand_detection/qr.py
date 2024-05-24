@@ -2,7 +2,7 @@ import cv2
 from pyzbar.pyzbar import decode
 
 # QR kodunun bulunduğu fotoğrafın yolunu belirtin
-image_path = 'foto/qr.jpg'
+image_path = 'foto/foto_qr_2.jpg'
 
 # Görüntüyü yükleyin
 image = cv2.imread(image_path)

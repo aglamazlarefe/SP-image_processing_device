@@ -2,10 +2,10 @@ import pickle
 import cv2
 import pytesseract
 
-image = cv2.imread("aligned_photo.jpg")
+image = cv2.imread("duzunli_foto.jpg")
 
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 21, 20)
+thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 25, 20)
 
 edges = cv2.Canny(thresh, 50, 280)
 contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -27,7 +27,17 @@ for contour in contours:
     if len(approx) == 4 and is_within_bounds(approx, image.shape):
         rectangles.append(approx)
 
+
+if len(rectangles) > 11:
+    del rectangles[11]
+if len(rectangles) > 10:
+    del rectangles[10]
+if len(rectangles) > 9:
+    del rectangles[9]
+
+
 rectangles_image = image.copy()
+
 texts= []
 for i, rectangle in enumerate(rectangles):
     x, y, w, h = cv2.boundingRect(rectangle)
@@ -40,7 +50,7 @@ for i, rectangle in enumerate(rectangles):
     
     thresh = cv2.flip(thresh,1)
     text = pytesseract.image_to_string(thresh, lang="tur", config='--psm 9')  # 9, 3, 4, 1 en iyisi
-    thresh = cv2.flip(thresh,1)
+    #thresh = cv2.flip(thresh,1)
     
     texts.append(text)
     
@@ -49,6 +59,8 @@ for i, rectangle in enumerate(rectangles):
     
     # Draw bounding box
     cv2.rectangle(rectangles_image, (x, y), (x+w, y+h), (0, 255, 0), 2)
+
+cv2.imshow("dikdörtgenler", cv2.resize(rectangles_image, (600, 900)))
 
 rectangle_name= []
 
@@ -61,7 +73,7 @@ fileObj = open("lib/hand_detection/rectangles.p", "wb")
 pickle.dump(rectangle_name, fileObj)
 fileObj.close()
 
-
+#print(rectangles)
 #cv2.resize(rectangles_image, (600, 900))
 cv2.waitKey(0)
 cv2.destroyAllWindows()
