@@ -1,9 +1,12 @@
+from email.mime import image
 import pickle
 import cv2
 import numpy as np
 
 # Image path
-image_path = "captured_image.jpg"  # Replace with the path to your image file
+#image_path = "captured_image.jpg"  # Replace with the path to your image file
+image_path = "foto/foto_qr_2.jpg"
+
 
 # Initialize variables
 img = cv2.imread(image_path)
@@ -86,6 +89,7 @@ if largest_rect is not None and len(largest_rect) == 4:
         cv2.circle(img, tuple(point[0]), 5, (255, 0, 0), -1)  # -1 fills the circle
 
     # Save selected points to file
+    
     points = largest_rect.reshape(4, 2)
     fileObj = open("lib/hand_detection/map.p", "wb")
     pickle.dump(points, fileObj)
@@ -93,6 +97,8 @@ if largest_rect is not None and len(largest_rect) == 4:
     print("Points saved to file: map.p")
 
 mirrored_result = warp_image(img)
+cv2.imshow("sonuç", cv2.resize(mirrored_result, (800,900)))
+cv2.imwrite("duzunli_foto.jpg", mirrored_result)
 cv2.waitKey(0)
 # Wait for a key press to close the window
 cv2.destroyAllWindows()
