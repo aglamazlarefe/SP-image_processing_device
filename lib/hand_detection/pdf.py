@@ -14,7 +14,7 @@ def write_to_pdf(output_path, text):
     pdf_canvas.setFont('Arial', 12)
 
     utf8_text = text.encode('utf-8')
-    pdf_canvas.drawString(100, 700, "tespit edilen sonuçlar\n")
+    #pdf_canvas.drawString(100, 700, "tespit edilen sonuçlar\n")
     
     y_position = 680
     
@@ -36,3 +36,12 @@ def write_to_pdf(output_path, text):
     print(f'PDF başarıyla  kaydedildi: {desktop_output_path}')
 
 
+write_to_pdf("el_isaret_sonuc.pdf","""
+
+AFL26 - numara 287    
+                      
+tespit edilen sonuçlar:
+
+Aşıkkı
+C şıkkı         
+""")
