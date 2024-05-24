@@ -7,6 +7,7 @@ import numpy as np  # NumPy library for numerical operations
 from cvzone.HandTrackingModule import HandDetector
 import time
 from lib.hand_detection.pdf import write_to_pdf
+from lib.hand_detection.qr import qr_content
 
 #from pdf import write_to_pdf
 
@@ -288,7 +289,7 @@ cap.release()
 cv2.destroyAllWindows()
 
 
-metin ="\n"
+metin =f"{qr_content}\n\n"
 if selected_countries:
     for kelime in selected_countries:
         metin=metin+kelime

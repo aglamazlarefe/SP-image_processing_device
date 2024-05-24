@@ -34,14 +34,3 @@ def write_to_pdf(output_path, text):
         f.write(buffer.read())
     
     print(f'PDF başarıyla  kaydedildi: {desktop_output_path}')
-
-
-write_to_pdf("el_isaret_sonuc.pdf","""
-
-AFL26 - numara 287    
-                      
-tespit edilen sonuçlar:
-
-Aşıkkı
-C şıkkı         
-""")

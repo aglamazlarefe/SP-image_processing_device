@@ -1,5 +1,3 @@
-
-import threading
 import tkinter as tk
 import os
 import cv2
@@ -92,7 +90,7 @@ class anasayfa(tk.Frame):
         optik_frame = optik(self.controller.container, self.controller)
         self.controller.frames[optik] = optik_frame
         optik_frame.grid(row=0, column=0, sticky="nsew")  # Use grid instead of pack
-        #optik_frame.start_camera()
+        optik_frame.start_camera()
 
 
 
@@ -212,13 +210,11 @@ class el_tanıma_2(tk.Frame):
         button_1 = tk.Button(self,image=self.button_image_1,borderwidth=0,highlightthickness=0,command=lambda: controller.show_frame(anasayfa),relief="flat")
         button_1.place(x=44.0, y=245.0, width=391.035400390625, height=70.0)
 
-
-        
-        
-        label_frame = tk.LabelFrame(self, background="#F0E2E7")
-        label_frame.pack(expand=1, fill="both", side="bottom", pady=(18, 83),padx=(18)) 
         
 
+
+    
+    
 
 class speech_reco(tk.Frame):
     def __init__(self, parent, controller):
@@ -263,7 +259,7 @@ class speech_reco(tk.Frame):
         self.label_frame.pack(expand=1, fill="both", side="bottom", pady=(0, 80))
 
         # Label for displaying transcription
-        self.transcription_label = tk.Label(self.label_frame, text="Transcription will appear here", font=('Helvetica', 12), background="#F0E2E7", wraplength=400)
+        self.transcription_label = tk.Label(self.label_frame, text="Konuşmanız Burada Görünecek", font=('Helvetica', 12), background="#F0E2E7", wraplength=400)
         self.transcription_label.pack()
 
         self.words = []  # words listesi sınıfın bir özelliği olacak şekilde taşındı
@@ -274,7 +270,7 @@ class speech_reco(tk.Frame):
 
         # Initialize the microphone
         with sr.Microphone() as source:
-            print("Say something...")
+            print("bir şey söyleyin...")
             # Capture audio data in a format compatible with Vosk
             audio_data = self.recognizer.listen(source)
 
@@ -293,7 +289,7 @@ class speech_reco(tk.Frame):
 
             # Extract and return the recognized text
             transcription = result_json.get("text", "")
-            print("Transcription:", transcription)
+            print("konuşmanız: ", transcription)
             return transcription
 
         except sr.UnknownValueError:
@@ -308,6 +304,7 @@ class speech_reco(tk.Frame):
 
 
     def transcribe_and_update_label(self):
+        import threading
         # Check if a thread is already running and wait for it to complete
         if self.thread and self.thread.is_alive():
             self.terminate_thread = True  # Set the flag to terminate the thread
