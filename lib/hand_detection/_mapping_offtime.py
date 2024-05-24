@@ -97,7 +97,7 @@ if largest_rect is not None and len(largest_rect) == 4:
     print("Points saved to file: map.p")
 
 mirrored_result = warp_image(img)
-cv2.imshow("sonuç", cv2.resize(mirrored_result, (800,900)))
+#cv2.imshow("sonuç", cv2.resize(mirrored_result, (800,900)))
 cv2.imwrite("duzunli_foto.jpg", mirrored_result)
 cv2.waitKey(0)
 # Wait for a key press to close the window

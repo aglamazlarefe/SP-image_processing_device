@@ -60,7 +60,7 @@ for i, rectangle in enumerate(rectangles):
     # Draw bounding box
     cv2.rectangle(rectangles_image, (x, y), (x+w, y+h), (0, 255, 0), 2)
 
-cv2.imshow("dikdörtgenler", cv2.resize(rectangles_image, (600, 900)))
+#cv2.imshow("dikdörtgenler", cv2.resize(rectangles_image, (600, 900)))
 
 rectangle_name= []
 
