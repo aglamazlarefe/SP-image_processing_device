@@ -131,6 +131,7 @@ class el_tanıma_1(tk.Frame):
     
     
     def next_page(self):
+        self.stop_camera()
         self.controller.show_frame(el_tanıma_2)
         import lib.hand_detection._mapping_offtime
         import lib.hand_detection._rectangles
@@ -470,7 +471,7 @@ class optik(tk.Frame):
 
 app = MainApplication()
 app.geometry("480x320")
-#app.attributes('-fullscreen', True)
+app.attributes('-fullscreen', True)
 app.resizable(False,False)
 app.title("SP akademik yardımcı")
 app.mainloop()
