@@ -151,3 +151,22 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
+
+# --- SP cihazı: çalışma zamanı dosyaları (uygulama üretir, depoya girmez) ---
+/captured_photo.png
+/captured_photo_optic.png
+/captured_image.jpg
+/aligned_photo.jpg
+/duzunli_foto.jpg
+lib/hand_detection/*.p
+cikti/
+*.pdf
+*.wav
+
+# Vosk ses modelleri (README'deki adresten indirilir; ~57 MB)
+lib/voice_recognation/vosk-model-*
+
+# Yerel test fotoğrafları (GPS EXIF bilgisi içerebilir)
+foto/
+# cvzone 2.x ilk çalıştırmada indirir (MediaPipe el modeli)
+hand_landmarker.task

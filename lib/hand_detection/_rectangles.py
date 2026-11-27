@@ -1,17 +1,16 @@
+"""2. adım: düzleştirilmiş kâğıttaki kutuları bulur ve içlerindeki yazıyı OCR ile okur.
+
+Sonuç `rectangles.p`'ye [kontur, yazı] listesi olarak kaydedilir; _finger_detect.py okur.
+"""
+
 import pickle
+
 import cv2
 import pytesseract
 
-image = cv2.imread("duzunli_foto.jpg")
-
-gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 25, 20)
-
-edges = cv2.Canny(thresh, 50, 280)
-contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-rectangles = []
-
+DUZ_FOTO = "duzunli_foto.jpg"
+KUTU_DOSYASI = "lib/hand_detection/rectangles.p"
+MIN_KUTU_ORANI = 0.005  # kutu, düzleştirilmiş kâğıt alanının en az %0,5'i olmalı
 
 
 def is_within_bounds(rectangle, image_shape, padding=5):
@@ -19,67 +18,40 @@ def is_within_bounds(rectangle, image_shape, padding=5):
     return y > padding and x > padding and y + h < image_shape[0] - padding and x + w < image_shape[1] - padding
 
 
+def kutulari_bul(duz_foto_yolu=DUZ_FOTO, cikti_yolu=KUTU_DOSYASI):
+    """Kutuları bulur, OCR yapar, sonucu kaydeder ve bulunan kutu sayısını döndürür."""
+    image = cv2.imread(duz_foto_yolu)
+    if image is None:
+        raise FileNotFoundError(f"Düzleştirilmiş fotoğraf okunamadı: {duz_foto_yolu}")
 
-for contour in contours:
-    perimeter = cv2.arcLength(contour, True)
-    approx = cv2.approxPolyDP(contour, 0.02 * perimeter, True)
-    
-    if len(approx) == 4 and is_within_bounds(approx, image.shape):
-        rectangles.append(approx)
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 25, 20)
+    edges = cv2.Canny(thresh, 50, 280)
+    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
+    # Küçük dörtgenler (QR kodun köşe işaretleri, gürültü) kutu sayılmaz. Örnek kâğıtta
+    # (foto/foto_qr_2.jpg) gerçek kutular görüntünün >= %1,05'i, artıklar <= %0,27'si.
+    # Eskiden findContours sırasındaki 9-11. öğeler siliniyordu; sıra OpenCV sürümüne göre
+    # değiştiği için bu yanlış öğeyi siliyordu.
+    en_kucuk_alan = MIN_KUTU_ORANI * image.shape[0] * image.shape[1]
 
-if len(rectangles) > 11:
-    del rectangles[11]
-if len(rectangles) > 10:
-    del rectangles[10]
-if len(rectangles) > 9:
-    del rectangles[9]
+    rectangles = []
+    for contour in contours:
+        perimeter = cv2.arcLength(contour, True)
+        approx = cv2.approxPolyDP(contour, 0.02 * perimeter, True)
+        if len(approx) == 4 and is_within_bounds(approx, image.shape) \
+                and cv2.contourArea(approx) >= en_kucuk_alan:
+            rectangles.append(approx)
 
+    rectangle_name = []
+    for rectangle in rectangles:
+        x, y, w, h = cv2.boundingRect(rectangle)
+        roi_gray = cv2.cvtColor(image[y:y + h, x:x + w], cv2.COLOR_BGR2GRAY)
+        _, roi_thresh = cv2.threshold(roi_gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        roi_thresh = cv2.flip(roi_thresh, 1)  # görüntü aynalı; yazıyı düz okumak için çevrilir
+        text = pytesseract.image_to_string(roi_thresh, lang="tur", config="--psm 9").strip()
+        rectangle_name.append([rectangle, text])
 
-rectangles_image = image.copy()
-
-texts= []
-for i, rectangle in enumerate(rectangles):
-    x, y, w, h = cv2.boundingRect(rectangle)
-    roi = image[y:y+h, x:x+w]
-    roi_gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
-    
-
-    # Image preprocessing (e.g., contrast stretching, thresholding)
-    _, thresh = cv2.threshold(roi_gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU,)
-    
-    thresh = cv2.flip(thresh,1)
-    text = pytesseract.image_to_string(thresh, lang="tur", config='--psm 9')  # 9, 3, 4, 1 en iyisi
-    #thresh = cv2.flip(thresh,1)
-    
-    texts.append(text)
-    
-
-    cv2.putText(rectangles_image, str(i+1), (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-    
-    # Draw bounding box
-    cv2.rectangle(rectangles_image, (x, y), (x+w, y+h), (0, 255, 0), 2)
-
-#cv2.imshow("dikdörtgenler", cv2.resize(rectangles_image, (600, 900)))
-
-rectangle_name= []
-
-for i in range(min(len(rectangles), len(texts))):
-    combined_element = [rectangles[i], texts[i]]
-    rectangle_name.append(combined_element)
-
-
-fileObj = open("lib/hand_detection/rectangles.p", "wb")
-pickle.dump(rectangle_name, fileObj)
-fileObj.close()
-
-#print(rectangles)
-#cv2.resize(rectangles_image, (600, 900))
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-#241
-#180-170
-#175-165
-
-
-
+    with open(cikti_yolu, "wb") as f:
+        pickle.dump(rectangle_name, f)
+    return len(rectangle_name)
