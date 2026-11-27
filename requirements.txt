@@ -1,0 +1,14 @@
+# Python 3.10 ile test edildi (Kasım 2026, Windows). Cihazda (Raspberry Pi / ARM) sürümleri yeniden doğrulayın.
+opencv-python>=4.8
+numpy>=1.24
+Pillow>=10
+reportlab>=4
+SpeechRecognition>=3.10
+PyAudio>=0.2.13
+vosk>=0.3.45
+# cvzone 2.x MediaPipe Tasks API kullanır. cvzone 1.x eski mp.solutions API'sine dayanır;
+# o API yeni mediapipe sürümlerinde yok (1.2.3'te kontrol edildi).
+cvzone>=2.0
+mediapipe
+pytesseract>=0.3.10
+pyzbar>=0.1.9
